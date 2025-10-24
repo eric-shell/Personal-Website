@@ -57,18 +57,13 @@ function minHtml() {
 function minImg() {
   return src('images/**/*.{gif,jpg,jpeg,png,svg}')
     .pipe(imagemin([
-      imagemin.gifsicle({interlaced: true}),
-      imagemin.mozjpeg({progressive: true}),
-      imagemin.optipng({optimizationLevel: 5}),
       imagemin.svgo({
         plugins: [
-          {removeViewBox: true},
+          {removeViewBox: false},
           {cleanupIDs: true}
         ]
       })
-    ], {
-      verbose: true
-    }))
+    ]))
     .pipe(dest('docs/images'))
     .pipe(browsersync.stream())
 }
@@ -90,4 +85,5 @@ watch('images/**/*', minImg)
 watch('files/**/*', moveFiles)
 
 // Full build functionality
+exports.minImg = minImg
 exports.default = series(preBuild, parallel(minScss, minJs, minHtml, moveFiles), minImg, serve)
